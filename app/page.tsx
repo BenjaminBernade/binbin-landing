@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import { Bungee } from 'next/font/google';
 
 const bungee = Bungee({
@@ -5,26 +8,138 @@ const bungee = Bungee({
   weight: '400',
 });
 
-export default function BinbinLandingPage() {
-  const musicStyles = [
-    {
-      title: 'House',
-      description:
-        'Warm textures, vocal depth and groove-led selections shaped for elegant atmospheres.',
+const content = {
+  en: {
+    nav: {
+      sound: 'Sound',
+      listen: 'Listen',
+      booking: 'Booking',
     },
-    {
-      title: 'Deep House',
-      description:
-        'Refined energy, hypnotic movement and subtle transitions for immersive sets.',
-    },
-    {
-      title: 'Late-Night Flow',
-      description:
-        'From slow-burn warm-ups to fuller dancefloor moments, always with control and intention.',
-    },
-  ];
+    heroTag: 'DJ • GROOVE • WITH INTENTION',
+    heroTitle: 'BiNBiN',
+    heroSubtitle: 'House, disco and beyond — always with groove and intention',
+    heroText:
+      'From warm-up atmospheres to late-night energy. A refined sound built for rooftops, bars, clubs and curated events.',
+    ctaBook: 'Book now',
+    ctaInstagram: 'Instagram',
+    highlights: ['Vinyl & digital', 'Curated energy', 'Elegant progression'],
+    photoBadge: 'Montpellier • House • Vinyl & digital',
 
-  const highlights = ['Vinyl & digital', 'Curated energy', 'Elegant progression'];
+    soundLabel: 'Sound',
+    soundTitle: 'Curated grooves, refined energy.',
+    musicStyles: [
+      {
+        title: 'House',
+        description:
+          'Warm textures, vocal depth and groove-led selections shaped for elegant atmospheres.',
+      },
+      {
+        title: 'Deep House',
+        description:
+          'Refined energy, hypnotic movement and subtle transitions for immersive sets.',
+      },
+      {
+        title: 'Late-Night Flow',
+        description:
+          'From slow-burn warm-ups to fuller dancefloor moments, always with control and intention.',
+      },
+    ],
+
+    listenLabel: 'Listen',
+    listenTitle: 'Let the music do the talking.',
+    listenText:
+      'A first taste of the atmosphere. Warm grooves, elegant progression and club-rooted energy.',
+    visitInstagram: 'Visit Instagram',
+    tabs: {
+      mix: 'Mix',
+      edit: 'Edit',
+      remix: 'Remix',
+    },
+    tabDescriptions: {
+      mix: 'A recorded mix that reflects the musical direction, flow and atmosphere.',
+      edit: 'A reworked version designed for dancefloor energy and personal interpretation.',
+      remix: 'A rebuilt track with a stronger identity, groove and club perspective.',
+    },
+
+    bookingLabel: 'Booking',
+    bookingTitle: 'Available for curated events and refined venues.',
+    bookingText:
+      'Rooftops, cocktail bars, clubs, private events and sunset sessions. Tasteful selection, elegant progression and the right energy for the room.',
+    bookingButton: 'Send booking request',
+
+    footerCity: 'Montpellier, France',
+  },
+
+  fr: {
+    nav: {
+      sound: 'Univers',
+      listen: 'Écoute',
+      booking: 'Booking',
+    },
+    heroTag: 'DJ • GROOVE • WITH INTENTION',
+    heroTitle: 'BiNBiN',
+    heroSubtitle: 'House, disco et au-delà — toujours avec groove et intention',
+    heroText:
+      'Des warm-up atmosphériques jusqu’aux moments plus intenses de la nuit. Un univers raffiné pensé pour les rooftops, bars, clubs et événements soignés.',
+    ctaBook: 'Réserver',
+    ctaInstagram: 'Instagram',
+    highlights: ['Vinyl & digital', 'Énergie maîtrisée', 'Progression élégante'],
+    photoBadge: 'Montpellier • House • Vinyl & digital',
+
+    soundLabel: 'Univers',
+    soundTitle: 'Grooves sélectionnés, énergie raffinée.',
+    musicStyles: [
+      {
+        title: 'House',
+        description:
+          'Textures chaleureuses, profondeur vocale et sélections guidées par le groove pour des atmosphères élégantes.',
+      },
+      {
+        title: 'Deep House',
+        description:
+          'Énergie raffinée, mouvement hypnotique et transitions subtiles pour des sets immersifs.',
+      },
+      {
+        title: 'Late-Night Flow',
+        description:
+          'Des warm-up progressifs jusqu’aux moments plus denses du dancefloor, toujours avec contrôle et intention.',
+      },
+    ],
+
+    listenLabel: 'Écoute',
+    listenTitle: 'Laisse la musique parler.',
+    listenText:
+      'Un premier aperçu de l’atmosphère. Des grooves chaleureux, une progression élégante et une énergie ancrée dans la culture club.',
+    visitInstagram: 'Voir Instagram',
+    tabs: {
+      mix: 'Mix',
+      edit: 'Edit',
+      remix: 'Remix',
+    },
+    tabDescriptions: {
+      mix: 'Un mix enregistré qui reflète la direction musicale, le flow et l’atmosphère.',
+      edit: 'Une version retravaillée pensée pour l’énergie du dancefloor et une interprétation personnelle.',
+      remix: 'Un morceau reconstruit avec une identité plus marquée, du groove et une vraie vision club.',
+    },
+
+    bookingLabel: 'Booking',
+    bookingTitle: 'Disponible pour des événements soignés et lieux raffinés.',
+    bookingText:
+      'Rooftops, bars à cocktails, clubs, événements privés et sunset sessions. Une sélection de goût, une progression élégante et la bonne énergie pour chaque lieu.',
+    bookingButton: 'Envoyer une demande',
+
+    footerCity: 'Montpellier, France',
+  },
+} as const;
+
+type Lang = 'fr' | 'en';
+type ListenTab = 'mix' | 'edit' | 'remix';
+
+export default function BinbinLandingPage() {
+  const [lang, setLang] = useState<Lang>('en');
+  const [activeTab, setActiveTab] = useState<ListenTab>('mix');
+
+  const t = content[lang];
 
   return (
     <main className="min-h-screen scroll-smooth bg-[#040506] text-[#f7f3eb]">
@@ -44,17 +159,47 @@ export default function BinbinLandingPage() {
               BiNBiN
             </a>
 
-            <nav className="hidden items-center gap-8 text-sm text-white/65 md:flex">
-              <a href="#sound" className="transition hover:text-white">
-                Sound
-              </a>
-              <a href="#listen" className="transition hover:text-white">
-                Listen
-              </a>
-              <a href="#booking" className="transition hover:text-white">
-                Booking
-              </a>
-            </nav>
+            <div className="flex items-center gap-6">
+              <nav className="hidden items-center gap-8 text-sm text-white/65 md:flex">
+                <a href="#sound" className="transition hover:text-white">
+                  {t.nav.sound}
+                </a>
+                <a href="#listen" className="transition hover:text-white">
+                  {t.nav.listen}
+                </a>
+                <a href="#booking" className="transition hover:text-white">
+                  {t.nav.booking}
+                </a>
+              </nav>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setLang('fr')}
+                  className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                    lang === 'fr'
+                      ? 'border-white/30 bg-white/10 text-white'
+                      : 'border-white/10 bg-white/[0.03] text-white/65 hover:bg-white/10'
+                  }`}
+                  aria-label="Version française"
+                  type="button"
+                >
+                  🇫🇷
+                </button>
+
+                <button
+                  onClick={() => setLang('en')}
+                  className={`rounded-full border px-3 py-1.5 text-sm transition ${
+                    lang === 'en'
+                      ? 'border-white/30 bg-white/10 text-white'
+                      : 'border-white/10 bg-white/[0.03] text-white/65 hover:bg-white/10'
+                  }`}
+                  aria-label="English version"
+                  type="button"
+                >
+                  🇬🇧
+                </button>
+              </div>
+            </div>
           </header>
 
           <div
@@ -63,22 +208,21 @@ export default function BinbinLandingPage() {
           >
             <div className="animate-[fadeIn_0.9s_ease-out]">
               <p className="mb-6 inline-flex items-center rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.35em] text-white/60 shadow-[0_0_30px_rgba(255,255,255,0.04)] backdrop-blur-sm">
-                DJ • GROOVE • WITH INTENTION
+                {t.heroTag}
               </p>
 
               <h1
                 className={`${bungee.className} text-6xl tracking-[-0.03em] text-white md:text-8xl lg:text-[7.2rem]`}
               >
-                BiNBiN
+                {t.heroTitle}
               </h1>
 
               <p className="mt-6 max-w-2xl text-xl italic text-white/82 md:text-2xl">
-                House, disco and beyond — always with groove and intention
+                {t.heroSubtitle}
               </p>
 
               <p className="mt-4 max-w-xl text-base leading-7 text-white/50 md:text-lg">
-                From warm-up atmospheres to late-night energy. A refined sound built for rooftops,
-                bars, clubs and curated events.
+                {t.heroText}
               </p>
 
               <div className="mt-10 flex flex-col gap-4 sm:flex-row">
@@ -86,7 +230,7 @@ export default function BinbinLandingPage() {
                   href="mailto:booking@binbinmusic.com?subject=Booking request - BiNBiN"
                   className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition duration-300 hover:scale-[1.03] hover:bg-[#f3ede1]"
                 >
-                  Book now
+                  {t.ctaBook}
                 </a>
 
                 <a
@@ -95,12 +239,12 @@ export default function BinbinLandingPage() {
                   rel="noreferrer"
                   className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/[0.03] px-6 py-3 text-sm text-white transition duration-300 hover:scale-[1.03] hover:bg-white/10"
                 >
-                  Instagram
+                  {t.ctaInstagram}
                 </a>
               </div>
 
               <div className="mt-10 flex flex-wrap gap-3 text-sm text-white/48">
-                {highlights.map((item) => (
+                {t.highlights.map((item) => (
                   <span
                     key={item}
                     className="rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 backdrop-blur-sm"
@@ -125,7 +269,7 @@ export default function BinbinLandingPage() {
 
                 <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
                   <div className="inline-flex items-center rounded-full border border-white/15 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.3em] text-white/65 backdrop-blur-sm">
-                    Montpellier • House • Vinyl & digital
+                    {t.photoBadge}
                   </div>
                 </div>
               </div>
@@ -150,14 +294,14 @@ export default function BinbinLandingPage() {
       <section id="sound" className="border-t border-white/10 bg-white/[0.02]">
         <div className="mx-auto max-w-7xl px-6 py-24 md:px-10 lg:px-16">
           <div className="max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.35em] text-white/42">Sound</p>
+            <p className="text-xs uppercase tracking-[0.35em] text-white/42">{t.soundLabel}</p>
             <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
-              Curated grooves, refined energy.
+              {t.soundTitle}
             </h2>
           </div>
 
           <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {musicStyles.map((item) => (
+            {t.musicStyles.map((item) => (
               <div
                 key={item.title}
                 className="group rounded-[1.75rem] border border-white/10 bg-white/[0.02] p-6 transition duration-300 hover:-translate-y-1.5 hover:border-white/20 hover:bg-white/[0.05] hover:shadow-[0_20px_50px_rgba(0,0,0,0.28)]"
@@ -176,13 +320,12 @@ export default function BinbinLandingPage() {
           <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-br from-white/[0.05] to-white/[0.02] p-8 shadow-[0_30px_80px_rgba(0,0,0,0.35)] md:p-10">
             <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <p className="text-xs uppercase tracking-[0.35em] text-white/42">Listen</p>
+                <p className="text-xs uppercase tracking-[0.35em] text-white/42">{t.listenLabel}</p>
                 <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
-                  Let the music do the talking.
+                  {t.listenTitle}
                 </h2>
                 <p className="mt-5 text-base leading-8 text-white/62 md:text-lg">
-                  A first taste of the atmosphere. Warm grooves, elegant progression and club-rooted
-                  energy.
+                  {t.listenText}
                 </p>
               </div>
 
@@ -192,20 +335,55 @@ export default function BinbinLandingPage() {
                 rel="noreferrer"
                 className="inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-white/10"
               >
-                Visit Instagram
+                {t.visitInstagram}
               </a>
             </div>
 
-            <div className="mt-8 overflow-hidden rounded-[1.5rem] border border-white/10 bg-black/20 p-3 backdrop-blur-sm">
-              <iframe
-                width="100%"
-                height="166"
-                scrolling="no"
-                frameBorder="no"
-                allow="autoplay"
-                className="rounded-xl"
-                src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/djbinbin/benjyb-november-2012-mix&color=%230b0f16&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false"
-              />
+            <div className="mt-8 flex flex-wrap gap-3">
+              {(['mix', 'edit', 'remix'] as ListenTab[]).map((tab) => (
+                <button
+                  key={tab}
+                  type="button"
+                  onClick={() => setActiveTab(tab)}
+                  className={`rounded-full border px-4 py-2 text-sm transition ${
+                    activeTab === tab
+                      ? 'border-white/30 bg-white/10 text-white'
+                      : 'border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/10'
+                  }`}
+                >
+                  {t.tabs[tab]}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-black/20 p-5 backdrop-blur-sm">
+              <p className="mb-4 text-sm leading-7 text-white/60">
+                {t.tabDescriptions[activeTab]}
+              </p>
+
+              {activeTab === 'mix' && (
+                <iframe
+                  width="100%"
+                  height="166"
+                  scrolling="no"
+                  frameBorder="no"
+                  allow="autoplay"
+                  className="rounded-xl"
+                  src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/djbinbin/benjyb-november-2012-mix&color=%230b0f16&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false"
+                />
+              )}
+
+              {activeTab === 'edit' && (
+                <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-12 text-center text-white/40">
+                  Add your edit here
+                </div>
+              )}
+
+              {activeTab === 'remix' && (
+                <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-12 text-center text-white/40">
+                  Add your remix here
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -215,13 +393,12 @@ export default function BinbinLandingPage() {
         <div className="mx-auto max-w-5xl px-6 md:px-10">
           <div className="grid gap-10 rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 shadow-[0_25px_70px_rgba(0,0,0,0.28)] md:p-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <p className="text-xs uppercase tracking-[0.35em] text-white/42">Booking</p>
+              <p className="text-xs uppercase tracking-[0.35em] text-white/42">{t.bookingLabel}</p>
               <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
-                Available for curated events and refined venues.
+                {t.bookingTitle}
               </h2>
               <p className="mt-5 max-w-2xl text-base leading-8 text-white/62 md:text-lg">
-                Rooftops, cocktail bars, clubs, private events and sunset sessions. Tasteful
-                selection, elegant progression and the right energy for the room.
+                {t.bookingText}
               </p>
             </div>
 
@@ -229,7 +406,7 @@ export default function BinbinLandingPage() {
               href="mailto:booking@binbinmusic.com?subject=Booking request - BiNBiN"
               className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium text-black transition duration-300 hover:scale-[1.03] hover:bg-[#f3ede1]"
             >
-              Send booking request
+              {t.bookingButton}
             </a>
           </div>
         </div>
@@ -239,7 +416,7 @@ export default function BinbinLandingPage() {
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-3 px-6 md:flex-row md:gap-6">
           <span>BiNBiN</span>
           <span className="hidden md:inline">•</span>
-          <span>Montpellier, France</span>
+          <span>{t.footerCity}</span>
           <span className="hidden md:inline">•</span>
           <a href="mailto:booking@binbinmusic.com" className="transition hover:text-white/70">
             booking@binbinmusic.com
