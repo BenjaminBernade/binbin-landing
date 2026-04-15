@@ -233,6 +233,7 @@ export default function BinbinLandingPage() {
   const [currentMedia, setCurrentMedia] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const touchEndX = useRef<number | null>(null);
+  const [activeMix, setActiveMix] = useState<'mix1' | 'mix2'>('mix1');
 
   const t = content[lang];
 
@@ -572,16 +573,49 @@ export default function BinbinLandingPage() {
               </p>
 
               {activeTab === 'mix' && (
-                <iframe
-                  title="BiNBiN SoundCloud mix"
-                  width="100%"
-                  height="166"
-                  scrolling="no"
-                  frameBorder="no"
-                  allow="autoplay"
-                  className="rounded-xl"
-                  src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/djbinbin/benjyb-november-2012-mix&color=%230b0f16&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false"
-                />
+                <div>
+                  <div className="mb-4 flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setActiveMix('mix1')}
+                      className={`rounded-full border px-4 py-2 text-sm transition ${
+                        activeMix === 'mix1'
+                          ? 'border-white/30 bg-white/10 text-white'
+                          : 'border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/10'
+                      }`}
+                    >
+                      Groove Session (Archive)
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setActiveMix('mix2')}
+                      className={`rounded-full border px-4 py-2 text-sm transition ${
+                        activeMix === 'mix2'
+                          ? 'border-white/30 bg-white/10 text-white'
+                          : 'border-white/10 bg-white/[0.03] text-white/60 hover:bg-white/10'
+                      }`}
+                    >
+      
+                      New Mix
+                    </button>
+                  </div>
+
+                  <iframe
+                    title={activeMix === 'mix1' ? 'BiNBiN Groove Session Archive' : 'BiNBiN New Mix'}
+                    width="100%"
+                    height="166"
+                    scrolling="no"
+                    frameBorder="no"
+                    allow="autoplay"
+                    className="rounded-xl"
+                    src={
+                      activeMix === 'mix1'
+                        ? 'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/djbinbin/benjyb-november-2012-mix&color=%230b0f16&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false'
+                        : 'https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/djbinbin/03-18-2010-go-deep-mix&color=%230b0f16&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=true&visual=false'
+                    }
+                  />
+                </div>
               )}
 
               {activeTab === 'edit' && (
