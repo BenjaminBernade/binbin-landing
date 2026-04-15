@@ -602,7 +602,7 @@ export default function BinbinLandingPage() {
                   </div>
 
                   <iframe
-                    title={activeMix === 'mix1' ? 'BiNBiN Groove Session Archive' : 'BiNBiN New Mix'}
+                    title={activeMix === 'mix1' ? 'BiNBiN Groove Session Archive' : 'DeepTech Mix Archive'}
                     width="100%"
                     height="166"
                     scrolling="no"
