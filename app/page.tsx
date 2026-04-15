@@ -19,8 +19,11 @@ const media: MediaItem[] = [
   { type: 'image', src: '/photos/dj-1.jpg' },
   { type: 'video', src: '/videos/set-1.mp4' },
   { type: 'image', src: '/photos/dj-2.jpg' },
-  { type: 'video', src: '/videos/set-2.mp4' },
-  { type: 'image', src: '/photos/dj-3.jpg' },
+  { type: 'image', src: '/photos/dj-4.jpg' },
+  { type: 'image', src: '/photos/dj-5.jpg' },
+  { type: 'image', src: '/photos/dj-6.jpg' },
+  { type: 'image', src: '/photos/dj-7.jpg' },
+  { type: 'image', src: '/photos/dj-8.jpg' },
 ];
 
 const content = {
