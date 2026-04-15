@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Bungee } from 'next/font/google';
 
 const bungee = Bungee({
@@ -8,9 +8,25 @@ const bungee = Bungee({
   weight: '400',
 });
 
+type Lang = 'fr' | 'en';
+type ListenTab = 'mix' | 'edit' | 'remix';
+type MediaItem = {
+  type: 'image' | 'video';
+  src: string;
+};
+
+const media: MediaItem[] = [
+  { type: 'image', src: '/photos/dj-1.jpg' },
+  { type: 'video', src: '/videos/set-1.mp4' },
+  { type: 'image', src: '/photos/dj-2.jpg' },
+  { type: 'video', src: '/videos/set-2.mp4' },
+  { type: 'image', src: '/photos/dj-3.jpg' },
+];
+
 const content = {
   en: {
     nav: {
+      bio: 'Bio',
       sound: 'Sound',
       listen: 'Listen',
       booking: 'Booking',
@@ -24,6 +40,39 @@ const content = {
     ctaInstagram: 'Instagram',
     highlights: ['Vinyl & digital', 'Curated energy', 'Elegant progression'],
     photoBadge: 'Montpellier • House • Vinyl & digital',
+
+    bioLabel: 'Bio',
+    bioTitle: 'A journey shaped by groove and culture.',
+    bioText: (
+      <>
+        Initially rooted in hip-hop culture, BiNBiN was introduced to deejaying by{' '}
+        <a
+          href="https://www.instagram.com/djgetdown/"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="underline underline-offset-4 transition hover:text-white"
+        >
+          DJ GETDOWN
+        </a>
+        , building a foundation based on rhythm, technique and musical curiosity.
+        <br />
+        <br />
+        Over time, his sound naturally evolved toward electronic music, exploring house, disco, deep
+        house and UK garage, while preserving a strong sense of groove and flow.
+        <br />
+        <br />
+        In 2007, he released his first record under the alias{' '}
+        <a
+          href="https://www.discogs.com/fr/release/890857-Benjy-B-Love-Has-Come-Around"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="underline underline-offset-4 transition hover:text-white"
+        >
+          Benjy B
+        </a>
+        , marking the beginning of a deeper artistic exploration between production and DJing.
+      </>
+    ),
 
     soundLabel: 'Sound',
     soundTitle: 'Curated grooves, refined energy.',
@@ -60,6 +109,10 @@ const content = {
       edit: 'A reworked version designed for dancefloor energy and personal interpretation.',
       remix: 'A rebuilt track with a stronger identity, groove and club perspective.',
     },
+    placeholders: {
+      edit: 'Add your edit here',
+      remix: 'Add your remix here',
+    },
 
     bookingLabel: 'Booking',
     bookingTitle: 'Available for curated events and refined venues.',
@@ -72,6 +125,7 @@ const content = {
 
   fr: {
     nav: {
+      bio: 'Bio',
       sound: 'Univers',
       listen: 'Écoute',
       booking: 'Booking',
@@ -85,6 +139,40 @@ const content = {
     ctaInstagram: 'Instagram',
     highlights: ['Vinyl & digital', 'Énergie maîtrisée', 'Progression élégante'],
     photoBadge: 'Montpellier • House • Vinyl & digital',
+
+    bioLabel: 'Bio',
+    bioTitle: 'Un parcours guidé par le groove et la culture musicale.',
+    bioText: (
+      <>
+        D’abord ancré dans la culture hip-hop, BiNBiN découvre le deejaying aux côtés de{' '}
+        <a
+          href="https://www.instagram.com/djgetdown/"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="underline underline-offset-4 transition hover:text-white"
+        >
+          DJ GETDOWN
+        </a>
+        , développant une base solide autour du rythme, de la technique et de la sélection musicale.
+        <br />
+        <br />
+        Son univers évolue progressivement vers les musiques électroniques, naviguant entre house,
+        disco, deep house et UK garage, tout en conservant une approche centrée sur le groove et la
+        fluidité.
+        <br />
+        <br />
+        En 2007, il sort un premier maxi sous le pseudonyme{' '}
+        <a
+          href="https://www.discogs.com/fr/release/890857-Benjy-B-Love-Has-Come-Around"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="underline underline-offset-4 transition hover:text-white"
+        >
+          Benjy B
+        </a>
+        , marquant le début d’une exploration plus poussée entre production et DJing.
+      </>
+    ),
 
     soundLabel: 'Univers',
     soundTitle: 'Grooves sélectionnés, énergie raffinée.',
@@ -121,6 +209,10 @@ const content = {
       edit: 'Une version retravaillée pensée pour l’énergie du dancefloor et une interprétation personnelle.',
       remix: 'Un morceau reconstruit avec une identité plus marquée, du groove et une vraie vision club.',
     },
+    placeholders: {
+      edit: 'Ajoute ici ton edit',
+      remix: 'Ajoute ici ton remix',
+    },
 
     bookingLabel: 'Booking',
     bookingTitle: 'Disponible pour des événements soignés et lieux raffinés.',
@@ -132,14 +224,48 @@ const content = {
   },
 } as const;
 
-type Lang = 'fr' | 'en';
-type ListenTab = 'mix' | 'edit' | 'remix';
-
 export default function BinbinLandingPage() {
   const [lang, setLang] = useState<Lang>('en');
   const [activeTab, setActiveTab] = useState<ListenTab>('mix');
+  const [currentMedia, setCurrentMedia] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const t = content[lang];
+
+  const nextMedia = () => {
+    setCurrentMedia((prev) => (prev + 1) % media.length);
+  };
+
+  const prevMedia = () => {
+    setCurrentMedia((prev) => (prev === 0 ? media.length - 1 : prev - 1));
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextMedia();
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const onTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.changedTouches[0].clientX;
+  };
+
+  const onTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.changedTouches[0].clientX;
+
+    if (touchStartX.current === null || touchEndX.current === null) return;
+
+    const delta = touchStartX.current - touchEndX.current;
+
+    if (delta > 50) nextMedia();
+    if (delta < -50) prevMedia();
+
+    touchStartX.current = null;
+    touchEndX.current = null;
+  };
 
   return (
     <main className="min-h-screen scroll-smooth bg-[#040506] text-[#f7f3eb]">
@@ -161,6 +287,9 @@ export default function BinbinLandingPage() {
 
             <div className="flex items-center gap-6">
               <nav className="hidden items-center gap-8 text-sm text-white/65 md:flex">
+                <a href="#bio" className="transition hover:text-white">
+                  {t.nav.bio}
+                </a>
                 <a href="#sound" className="transition hover:text-white">
                   {t.nav.sound}
                 </a>
@@ -236,7 +365,7 @@ export default function BinbinLandingPage() {
                 <a
                   href="https://www.instagram.com/binbin.dj"
                   target="_blank"
-                  rel="noreferrer"
+                  rel="noreferrer noopener"
                   className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/[0.03] px-6 py-3 text-sm text-white transition duration-300 hover:scale-[1.03] hover:bg-white/10"
                 >
                   {t.ctaInstagram}
@@ -255,22 +384,84 @@ export default function BinbinLandingPage() {
               </div>
             </div>
 
-            <div className="relative animate-[fadeIn_1.2s_ease-out]">
+            <div
+              className="relative animate-[fadeIn_1.2s_ease-out]"
+              onTouchStart={onTouchStart}
+              onTouchEnd={onTouchEnd}
+            >
               <div className="absolute -inset-4 rounded-[2rem] bg-white/[0.04] blur-2xl" />
 
               <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] shadow-[0_30px_80px_rgba(0,0,0,0.45)]">
-                <img
-                  src="/dj.jpg"
-                  alt="BiNBiN DJ"
-                  className="h-full min-h-[520px] w-full object-cover brightness-90 contrast-110 transition duration-700 hover:scale-[1.02]"
-                />
+                <div className="relative h-full min-h-[520px] w-full">
+                  {media.map((item, index) => (
+                    <div
+                      key={`${item.src}-${index}`}
+                      className={`absolute inset-0 transition-all duration-700 ease-out ${
+                        index === currentMedia
+                          ? 'z-10 opacity-100 scale-100'
+                          : 'z-0 opacity-0 scale-[1.02]'
+                      }`}
+                    >
+                      {item.type === 'image' ? (
+                        <img
+                          src={item.src}
+                          alt={`BiNBiN media ${index + 1}`}
+                          className="h-full min-h-[520px] w-full object-cover brightness-90 contrast-110"
+                        />
+                      ) : (
+                        <video
+                          src={item.src}
+                          className="h-full min-h-[520px] w-full object-cover brightness-90 contrast-110"
+                          autoPlay={index === currentMedia}
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+                <div className="absolute inset-0 z-20 bg-gradient-to-t from-black via-black/45 to-transparent" />
 
-                <div className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+                <div className="absolute inset-x-0 bottom-0 z-30 flex items-center justify-between p-6 md:p-8">
                   <div className="inline-flex items-center rounded-full border border-white/15 bg-black/35 px-4 py-2 text-xs uppercase tracking-[0.3em] text-white/65 backdrop-blur-sm">
                     {t.photoBadge}
                   </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={prevMedia}
+                      className="rounded-full border border-white/15 bg-black/35 px-3 py-2 text-sm text-white transition hover:bg-white/10"
+                      aria-label="Previous media"
+                    >
+                      ←
+                    </button>
+                    <button
+                      type="button"
+                      onClick={nextMedia}
+                      className="rounded-full border border-white/15 bg-black/35 px-3 py-2 text-sm text-white transition hover:bg-white/10"
+                      aria-label="Next media"
+                    >
+                      →
+                    </button>
+                  </div>
+                </div>
+
+                <div className="absolute bottom-20 left-6 z-30 flex gap-2 md:left-8">
+                  {media.map((_, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => setCurrentMedia(index)}
+                      className={`h-2.5 w-2.5 rounded-full transition ${
+                        index === currentMedia ? 'bg-white' : 'bg-white/30 hover:bg-white/60'
+                      }`}
+                      aria-label={`Go to media ${index + 1}`}
+                    />
+                  ))}
                 </div>
               </div>
             </div>
@@ -289,6 +480,22 @@ export default function BinbinLandingPage() {
             }
           }
         `}</style>
+      </section>
+
+      <section id="bio" className="border-t border-white/10 py-24">
+        <div className="mx-auto max-w-5xl px-6 md:px-10">
+          <div className="rounded-[2rem] border border-white/10 bg-white/[0.03] p-8 shadow-[0_25px_70px_rgba(0,0,0,0.28)] md:p-10">
+            <p className="text-xs uppercase tracking-[0.35em] text-white/42">{t.bioLabel}</p>
+
+            <h2 className="mt-4 text-3xl font-semibold tracking-[-0.03em] text-white md:text-4xl">
+              {t.bioTitle}
+            </h2>
+
+            <div className="mt-6 max-w-3xl text-base leading-8 text-white/62 md:text-lg">
+              {t.bioText}
+            </div>
+          </div>
+        </div>
       </section>
 
       <section id="sound" className="border-t border-white/10 bg-white/[0.02]">
@@ -332,7 +539,7 @@ export default function BinbinLandingPage() {
               <a
                 href="https://www.instagram.com/binbin.dj"
                 target="_blank"
-                rel="noreferrer"
+                rel="noreferrer noopener"
                 className="inline-flex items-center justify-center rounded-full border border-white/15 px-5 py-3 text-sm font-medium text-white transition duration-300 hover:bg-white/10"
               >
                 {t.visitInstagram}
@@ -363,6 +570,7 @@ export default function BinbinLandingPage() {
 
               {activeTab === 'mix' && (
                 <iframe
+                  title="BiNBiN SoundCloud mix"
                   width="100%"
                   height="166"
                   scrolling="no"
@@ -375,13 +583,13 @@ export default function BinbinLandingPage() {
 
               {activeTab === 'edit' && (
                 <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-12 text-center text-white/40">
-                  Add your edit here
+                  {t.placeholders.edit}
                 </div>
               )}
 
               {activeTab === 'remix' && (
                 <div className="rounded-xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-12 text-center text-white/40">
-                  Add your remix here
+                  {t.placeholders.remix}
                 </div>
               )}
             </div>
