@@ -597,7 +597,7 @@ export default function BinbinLandingPage() {
                       }`}
                     >
       
-                      New Mix
+                      DeepTech Mix (Archive)
                     </button>
                   </div>
 
