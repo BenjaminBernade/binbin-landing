@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "npm run dev:webpack",
+    "dev:webpack": "BINBIN_WEBPACK=1 NODE_OPTIONS=--max-old-space-size=2048 next dev --webpack --hostname 127.0.0.1",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint"
   },

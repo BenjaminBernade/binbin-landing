@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { Bungee } from 'next/font/google';//binbin-music.vercel.app/
 
 const bungee = Bungee({
@@ -10,20 +11,40 @@ const bungee = Bungee({
 
 type Lang = 'fr' | 'en';
 type ListenTab = 'mix' | 'edit' | 'remix';
-type MediaItem = {
-  type: 'image' | 'video';
-  src: string;
-};
+type MediaItem =
+  | { type: 'image'; src: string; alt: Record<Lang, string> }
+  | { type: 'video'; src: string };
 
 const media: MediaItem[] = [
-  { type: 'image', src: '/photos/dj-1.jpg' },
+  { type: 'image', src: '/photos/dj-1.webp', alt: {
+    en: 'Black-and-white portrait of BiNBiN wearing a cap',
+    fr: 'Portrait en noir et blanc de BiNBiN portant une casquette',
+  } },
   { type: 'video', src: '/videos/set-1.mp4' },
-  { type: 'image', src: '/photos/dj-2.jpg' },
-  { type: 'image', src: '/photos/dj-4.jpg' },
-  { type: 'image', src: '/photos/dj-5.jpg' },
-  { type: 'image', src: '/photos/dj-6.jpg' },
-  { type: 'image', src: '/photos/dj-7.jpg' },
-  { type: 'image', src: '/photos/dj-8.jpg' },
+  { type: 'image', src: '/photos/dj-2.webp', alt: {
+    en: 'BiNBiN mixing vinyl records while wearing headphones',
+    fr: 'BiNBiN mixant des vinyles avec un casque sur les oreilles',
+  } },
+  { type: 'image', src: '/photos/dj-4.webp', alt: {
+    en: 'BiNBiN at a DJ controller surrounded by green-lit plants',
+    fr: 'BiNBiN à son contrôleur DJ parmi des plantes éclairées en vert',
+  } },
+  { type: 'image', src: '/photos/dj-5.webp', alt: {
+    en: 'BiNBiN seen from behind mixing for guests at sunset',
+    fr: 'BiNBiN vu de dos mixant devant le public au coucher du soleil',
+  } },
+  { type: 'image', src: '/photos/dj-6.webp', alt: {
+    en: 'BiNBiN adjusting the DJ decks beside sunlit windows',
+    fr: 'BiNBiN réglant ses platines près de baies vitrées ensoleillées',
+  } },
+  { type: 'image', src: '/photos/dj-7.webp', alt: {
+    en: 'BiNBiN performing a DJ set under blue lighting at night',
+    fr: 'BiNBiN en DJ set sous un éclairage bleu en soirée',
+  } },
+  { type: 'image', src: '/photos/dj-8.webp', alt: {
+    en: 'Black-and-white portrait of BiNBiN smiling with headphones',
+    fr: 'Portrait en noir et blanc de BiNBiN souriant avec un casque',
+  } },
 ];
 
 const content = {
@@ -237,6 +258,10 @@ export default function BinbinLandingPage() {
 
   const t = content[lang];
 
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
   const nextMedia = () => {
     setCurrentMedia((prev) => (prev + 1) % media.length);
   };
@@ -407,9 +432,13 @@ export default function BinbinLandingPage() {
                       }`}
                     >
                       {item.type === 'image' ? (
-                        <img
+                        <Image
                           src={item.src}
-                          alt={`BiNBiN media ${index + 1}`}
+                          alt={item.alt[lang]}
+                          fill
+                          sizes="(min-width: 1280px) 510px, (min-width: 1024px) calc(47.5vw - 99px), (min-width: 768px) calc(100vw - 80px), calc(100vw - 48px)"
+                          loading={index === 0 ? 'eager' : 'lazy'}
+                          fetchPriority={index === 0 ? 'high' : 'auto'}
                           className="h-full min-h-[520px] w-full object-cover brightness-90 contrast-110"
                         />
                       ) : (
