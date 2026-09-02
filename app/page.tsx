@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Bungee } from 'next/font/google';
+import { Bungee } from 'next/font/google';//binbin-music.vercel.app/
 
 const bungee = Bungee({
   subsets: ['latin'],
